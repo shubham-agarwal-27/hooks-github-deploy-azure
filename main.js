@@ -51,26 +51,6 @@ function writeFile(file_name, content){
     }
 }
 /**
- * Install all the required dependencies.
- * @return  {Promise}   Resolves after the packages have been installed
- */
-function installPackages(){
-    console.log();
-    console.log("Installing packages...");
-    console.log();
-    return new Promise((resolve, reject) => {
-        exec('npm install fs express uuid open node-fetch tweetsodium process adal-node keytar readline', (error, stdout) => {
-            if(error){
-                reject("\nPackages installation unsuccessful");
-            }
-            else{
-                console.log("\nAll packages installed successfully");
-                resolve();
-            }
-		});
-    });
-}
-/**
  * Gets all the file names in a directory relative to the repository root directory
  * @param   {String}    dir_name 	The relative path of directory whose file contents are required
  * @return  {Promise}			    Resolves the list of files in the directory
@@ -180,7 +160,7 @@ async function getCallback(callback, resource, redirectUri, client_id){
                 res.send(message);
                 return;
               }
-              res.send(message);
+              res.send("Login Successful!");
               val = response;
               resolve();
             });
@@ -204,7 +184,6 @@ async function OAuthARM(){
 
 async function main(){
     try{
-        await installPackages();
         var hooks = await getFilesInDirectory(".git/hooks");
         if(checkFileExists(hooks, "pre-commit")){
             renameFile(".git/hooks/pre-commit", ".git/hooks/pre-commit.bkp");
@@ -242,29 +221,12 @@ async function main(){
         await keytar.setPassword('graph', 'refresh_token', val['refreshToken']);
         await keytar.setPassword('graph', 'tenant_id', val['tenantId']);
 
-        var pass = await keytar.getPassword(graph_token, 'access_token');
-        console.log(pass);
-        pass = await keytar.getPassword(graph_token, 'token_type');
-        console.log(pass);
-        pass = await keytar.getPassword(graph_token, 'refresh_token');
-        console.log(pass);
-        pass = await keytar.getPassword(graph_token, 'refresh_token');
-        console.log(pass);
-
-
         await OAuthARM();
-        console.log("ARM DONE");
         const arm_token = 'arm';
         await keytar.setPassword(arm_token, 'access_token', val['accessToken']);
         await keytar.setPassword(arm_token, 'token_type', val['tokenType']);
         await keytar.setPassword(arm_token, 'refresh_token', val['refreshToken']);
-
-        pass = await keytar.getPassword(arm_token, 'access_token');
-        console.log(pass);
-        pass = await keytar.getPassword(arm_token, 'token_type');
-        console.log(pass);
-        pass = await keytar.getPassword(arm_token, 'refresh_token');
-        console.log(pass);
+        console.log();
         console.log("Visit https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md for any information.\n")
         console.log("Or you can open config.yml file created in your repository to get started with the deployment.");
         console.log();

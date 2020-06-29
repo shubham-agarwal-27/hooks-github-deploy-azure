@@ -10,22 +10,21 @@ This repository contains a node script that will set your GitHub repository so t
 
  - Run the following command inside the root of your repository.
  ```
-   npm i @shubham-agarwal-27/hooks-deploy-to-azure
+   npm i @shubham-agarwal-27/hooks-github-deploy-azure
  ```  
- - This creates a folder "@shubham-agarwal-27/hooks-deploy-to-azure" inside the node_modules folder.
+ - This creates a folder "@shubham-agarwal-27/hooks-github-deploy-azure" inside the node_modules folder.
  - By staying in the root of your repository, run the following node command:
  ```
-   node node_modules/@shubham-agarwal-27/hooks-deploy-to-azure
+   node node_modules/@shubham-agarwal-27/hooks-github-deploy-azure
  ```
  - Now, open the workflow_inputs.txt file that has been created in the root of your repository and give the following inputs:
-   - **[Azure Tenant ID](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#azure-tenant-id)** (Required)
+   - **[Github PAT](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#gitub-pat)** (Required)
    - **[Subscription](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#subscription-id)** (Required)
    - **[Resource group](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#resource-group)** (Optional)
    - **[Resource](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#resource)** (Optional. If you gave an existing resource group in above input, make sure no resource exists with this name in the given resource group)  
  - The inputs should be in the following format:
     ```
         github_PAT: <guid>
-        tenant_id: <guid>
         subscription: <guid>
         resource_group: sampleresourcegroup
         resource: sampleresource
