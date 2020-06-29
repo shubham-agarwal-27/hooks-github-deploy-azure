@@ -1,7 +1,28 @@
 const { exec } = require('child_process');
-const fs = require('fs');
-const { resolve } = require('path');
+var express = require('express');
+var app = express();
+var fs = require('fs');
+var keytar = require('keytar');
+var opn = require('open');
+const { exit } = require('process');
+var AuthenticationContext = require('adal-node').AuthenticationContext;
 
+var client_id_graph = '3c2ff05c-d8db-48bf-ac19-9b0d7294e050';
+const client_id_arm = '33c31634-d8df-4199-99f6-ae4b3fef50cd';
+
+var sampleParameters = {
+    "tenant" : "common",
+    "authorityHostUrl" : "https://login.microsoftonline.com",
+    "clientId" : "3c2ff05c-d8db-48bf-ac19-9b0d7294e050"
+};
+var authorityUrl = sampleParameters.authorityHostUrl + '/' + sampleParameters.tenant;
+var redirectUri = 'http://localhost:3000/callback';
+var resource_graph = 'https://graph.microsoft.com';
+var resource_arm = 'https://management.azure.com';
+var templateAuthzUrl = 'https://login.microsoftonline.com/' + sampleParameters.tenant + '/oauth2/authorize?response_type=code&client_id=<client_id>&redirect_uri=<redirect_uri>&state=<state>&resource=<resource>&scope=<scope>';
+var scopeForGraph = 'offline_access%20user.read%20Directory.AccessAsUser.All';
+var scopeForARM = 'https://management.azure.com//user_impersonation';
+var val;
 /**
  * Read the file contents
  * @param   {String}	file_name 	The name of the file to be read
@@ -38,7 +59,7 @@ function installPackages(){
     console.log("Installing packages...");
     console.log();
     return new Promise((resolve, reject) => {
-        exec('npm install fs express uuid open node-fetch tweetsodium process', (error, stdout) => {
+        exec('npm install fs express uuid open node-fetch tweetsodium process adal-node keytar readline', (error, stdout) => {
             if(error){
                 reject("\nPackages installation unsuccessful");
             }
@@ -126,6 +147,61 @@ function createDirectory(dir_name){
     });
 }
 
+/**
+ * Open the Authentication URL in default browser
+ * @param  	{String} 	scope 			The scopes required by the OAuth app
+ * @param  	{String} 	callback 		The redirect URL for the OAuth app
+ * @param  	{String} 	client_id 		Client ID of the OAuth app
+ * @param   {String}    tenant_id       Tenant to be used in the authentication URL
+ * @param  	{String} 	resource 	    The resource name corresponding to Microsoft graph or ARM endpoints
+ */
+async function openSignInLink(scope, callback, client_id, tenant, resource){
+	await opn('https://login.microsoftonline.com/'+tenant+'/oauth2/authorize?client_id='+client_id+'&response_type=code&redirect_uri='+callback+'&response_mode=query&scope='+scope+'&resource='+resource);
+}
+/**
+ * Get the redirect  URL for the OAuth process
+ * @param  {String}     callback 	    The redirect page for the OAuth app
+ * @param   {String}    resource        The resource name corresponding to Microsoft graph or ARM endpoints
+ * @param   {String}    redirectUri     The redirect URL for the Authentication
+ * @param   {String}    client_id       Client ID of the OAuth app
+ * @return {Promise}			        Resolves after getting the access token
+ */
+async function getCallback(callback, resource, redirectUri, client_id){
+	return new Promise((resolve) => {
+        app.get('/'+callback, function(req, res) {
+            var authenticationContext = new AuthenticationContext(authorityUrl);
+            authenticationContext.acquireTokenWithAuthorizationCode(req.query.code, redirectUri, resource, client_id, undefined, async function(err, response) {
+              var message = req.query.code + '\n' + redirectUri + '\n' + resource+'\n';
+              if (err) {
+                message += 'error: ' + err.message + '\n';
+              }
+              message += JSON.stringify(response);
+              if (err) {
+                res.send(message);
+                return;
+              }
+              res.send(message);
+              val = response;
+              resolve();
+            });
+        });
+	});
+}
+/**
+ * Authenticate the user's azure account for the Microsoft Graph endpoint
+ */
+async function OAuthGraph(){
+	await openSignInLink(scopeForGraph, 'http://localhost:3000/callback', client_id_graph, 'common',resource_graph);
+	await getCallback('callback',resource_graph, 'http://localhost:3000/callback', client_id_graph);
+}
+/**
+ * Authenticate the user's azure account for the Microsoft Graph endpoint
+ */
+async function OAuthARM(){
+	await openSignInLink(scopeForARM, 'http://localhost:3000/callbackarm', client_id_arm, 'common',resource_arm);
+	await getCallback('callbackarm', resource_arm, 'http://localhost:3000/callbackarm', client_id_arm);
+}
+
 async function main(){
     try{
         await installPackages();
@@ -153,16 +229,52 @@ async function main(){
 
         var extra_files = ['', '/open_workflow_run', '/config.yml','templates/'];
         appendFile('.gitignore', extra_files.join("\n"));
+
+                
+        app.listen(3000);
+        console.log('Server started!');
+        
+        await OAuthGraph();
+        console.log("GRAPH DONE");
+        const graph_token = 'graph';
+        await keytar.setPassword('graph', 'access_token', val['accessToken']);
+        await keytar.setPassword('graph', 'token_type', val['tokenType']);
+        await keytar.setPassword('graph', 'refresh_token', val['refreshToken']);
+        await keytar.setPassword('graph', 'tenant_id', val['tenantId']);
+
+        var pass = await keytar.getPassword(graph_token, 'access_token');
+        console.log(pass);
+        pass = await keytar.getPassword(graph_token, 'token_type');
+        console.log(pass);
+        pass = await keytar.getPassword(graph_token, 'refresh_token');
+        console.log(pass);
+        pass = await keytar.getPassword(graph_token, 'refresh_token');
+        console.log(pass);
+
+
+        await OAuthARM();
+        console.log("ARM DONE");
+        const arm_token = 'arm';
+        await keytar.setPassword(arm_token, 'access_token', val['accessToken']);
+        await keytar.setPassword(arm_token, 'token_type', val['tokenType']);
+        await keytar.setPassword(arm_token, 'refresh_token', val['refreshToken']);
+
+        pass = await keytar.getPassword(arm_token, 'access_token');
+        console.log(pass);
+        pass = await keytar.getPassword(arm_token, 'token_type');
+        console.log(pass);
+        pass = await keytar.getPassword(arm_token, 'refresh_token');
+        console.log(pass);
+        console.log("Visit https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md for any information.\n")
+        console.log("Or you can open config.yml file created in your repository to get started with the deployment.");
+        console.log();
+        process.exit(0);
     }
     catch(err){
         console.log(err);
         console.log("\nProgram didn't run successfully.. Exitting..");
         process.exit(1);
     }
-    
-    console.log("Visit https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md for any information.\n")
-    console.log("Or you can open config.yml file created in your repository to get started with the deployment.");
-    console.log();
 }
 
 main();

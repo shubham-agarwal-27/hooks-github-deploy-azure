@@ -4,9 +4,8 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const { exit } = require('process');
 var readline = require('readline');
-var stream = require('stream');
 
-const input_keys = ['github_PAT', 'tenant_id', 'subscription', 'resource_group', 'resource'];
+const input_keys = ['github_PAT', 'subscription', 'resource_group', 'resource'];
 const workflow_inputs_err_msg = "There seems to be no config.yml file. If deleted, just create a config.yml file and follow the instructions given before";
 const workflow_err_msg = "There seems to be some issue with the templates folder. Delete the folder (if present) and run the program again."
 var config_file_fields_errors = [];
@@ -265,7 +264,7 @@ async function createNewWorkflow(repo_analysis_result, file_inputs){
 		var workflow_file = 'templates/'+repo_analysis_result+'/workflow.yml';
 		console.log();
 
-		var resource_name = file_inputs[4].replace(/\s+/g, '').split(":")[1];
+		var resource_name = file_inputs[3].replace(/\s+/g, '').split(":")[1];
 		if(resource_name === '' || resource_name === '<resource>'){
 			resource_name = await getRepoName();
 			resource_name = resource_name.replace(/[^0-9A-Z]+/gi,"");

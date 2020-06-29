@@ -7,7 +7,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const { exit } = require('process');
 
-const input_keys = ['github_PAT', 'tenant_id', 'subscription', 'resource_group', 'resource'];
+const input_keys = ['github_PAT', 'subscription', 'resource_group', 'resource'];
 const workflow_inputs_err_msg = "There seems to be no config.yml file. If deleted, just create a config.yml file and follow the instructions given before";
 const err_msg = "There seems to be some problem. You can do one of the following:\n1.Go to the actions tab in your repository.\n2.You can retry with the execution.";
 /**

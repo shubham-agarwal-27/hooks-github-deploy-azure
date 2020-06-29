@@ -1,5 +1,4 @@
 github_PAT: <github_PAT>
-tenant_id: <tenant_id>
 subscription: <subscription>
 resource_group: <resource_group>
 resource: <resource>
@@ -21,9 +20,6 @@ How to Deploy?:
     - GitHub PAT Token:
       - Repo scope needed.
       - Visit (https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md#github-pat) to know how to get a GitHub APT Token.
-    
-    - Azure Tenant ID:
-      - Visit (https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md#azure-tenant-id) to know how to get your Azure Tenant ID.
 
     - Subscription ID:
       - Visit (https://github.com/shubham-agarwal-27/hooks-deploy-to-azure/blob/master/README.md#subscription-id) to know how to get a subscription
