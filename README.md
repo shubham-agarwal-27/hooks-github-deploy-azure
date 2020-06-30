@@ -17,7 +17,8 @@ This repository contains a node script that will set your GitHub repository so t
  ```
    node node_modules/@shubham-agarwal-27/hooks-github-deploy-azure
  ```
- - Now, open the workflow_inputs.txt file that has been created in the root of your repository and give the following inputs:
+ - You will be promted for Azure Authentication, where you will be required to give your consent to the app.
+ - Now, open the confg.yml file that has been created in the root of your repository and give the following inputs:
    - **[Github PAT](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#gitub-pat)** (Required)
    - **[Subscription](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#subscription-id)** (Required)
    - **[Resource group](https://github.com/shubham-agarwal-27/hooks-deploy-to-azure#resource-group)** (Optional)
@@ -29,7 +30,7 @@ This repository contains a node script that will set your GitHub repository so t
         resource_group: sampleresourcegroup
         resource: sampleresource
     ```
-  - Once, the inputs have been supplied, go ahead with committing your changes to GitHub. Once git push is run, you will be prompted for Azure login, where you would be asked for your consent. Once authorized, your commits would be pushed and a GitHub Workflow would be triggered.
+  - Once, the inputs have been supplied, go ahead with committing your changes to GitHub. Then you can do a git push and your GitHub Workflow would be triggered.
   - The Workflow run can be viewed in your browser by running the following command from the root of your repository:
     ```
       node open_workflow_run
@@ -46,7 +47,7 @@ This repository contains a node script that will set your GitHub repository so t
     - Give some note associated with the token for your aid
     - Select the repo scope for this token and Click on Generate token.
     - Make sure you copy the token being shown to you as you won't be able to get the value in future
-    - Open the workflow_inputs.txt file in your local repository. 
+    - Open the confg.yml file in your local repository. 
     - Paste the content to the right side of "github_PAT:" mentioned in the file. DO NOT CHANGE ANYTHING ELSE. The input format should be like this => "github_PAT:<GitHub_PAT>"
 
 ## Subscription ID

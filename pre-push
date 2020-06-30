@@ -264,7 +264,7 @@ async function getResourceGroups(userDetails) {
  * @param  	{Object} 	userDetails 	The object that stores user's information
  */
 async function createResourceGroup(userDetails){
-	console.log("Creating a new Resource Group: " + userDetails['resource_group']);
+	console.log("Provisioning a new Resource Group: " + userDetails['resource_group']);
 	await makeAPICall(`https://management.azure.com/subscriptions/${userDetails['subscription']}/resourcegroups/${userDetails['resource_group']}?api-version=2019-10-01`, {
 		method: 'PUT',
 		json: true,
@@ -296,7 +296,7 @@ async function getResources(userDetails){
  * @param  	{Object} 	userDetails 	The object that stores user's information
  */
 async function createResource(userDetails){
-	console.log("Creating a new Resource: " + userDetails['resource']);
+	console.log("Provisioning a new Resource: " + userDetails['resource']);
 	await makeAPICall(`https://management.azure.com/subscriptions/${userDetails['subscription']}/resourcegroups/${userDetails['resource_group']}/providers/Microsoft.Web/sites/${userDetails['resource']}?api-version=2019-08-01`, {
 		method: 'PUT',
 		json: true,
@@ -330,7 +330,7 @@ async function getApplications(userDetails){
  * @param  	{Object} 	userDetails 	The object that stores user's information
  */
 async function createApp(userDetails){
-	console.log("Creating an application: " + 'AppForSPN'+userDetails['resource']);
+	console.log("Provisioning an application and an SPN: " + 'AppForSPN'+userDetails['resource']);
 	userDetails['new_app_details'] = await makeAPICall('https://graph.microsoft.com/v1.0/applications', {
 		method: 'POST',
 		json: true,
