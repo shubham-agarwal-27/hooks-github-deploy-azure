@@ -8,14 +8,16 @@ This repository contains a node script that will set your GitHub repository so t
 
 ## Getting Started
 
- - Run the following command inside the root of your repository.
+ - Run the following command that will install the package globally. If you are new to GitHub packages, then visit [this](https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages#authenticating-to-github-packages) first.
  ```
-   npm i @shubham-agarwal-27/hooks-github-deploy-azure
+   npm install -g @shubham-agarwal-27/hooks-github-deploy-azure
  ```  
- - This creates a folder "@shubham-agarwal-27/hooks-github-deploy-azure" inside the node_modules folder.
+ - This creates a folder "@shubham-agarwal-27/hooks-github-deploy-azure" inside the global node_modules folder.
  - By staying in the root of your repository, run the following node command:
  ```
-   node node_modules/@shubham-agarwal-27/hooks-github-deploy-azure
+   npm config ls -l | grep prefix | head -n 1 | cut -d " " -f 3 > githookstemp.txt & set /p pathvar= < githookstemp.txt & del githookstemp.txt
+   
+   node %pathvar%/node_modules/@shubham-agarwal-27/hooks-github-deploy-azure
  ```
  - You will be promted for Azure Authentication, where you will be required to give your consent to the app.
  - Now, open the confg.yml file that has been created in the root of your repository and give the following inputs:
