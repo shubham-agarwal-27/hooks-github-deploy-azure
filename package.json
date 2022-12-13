@@ -21,7 +21,7 @@
   "homepage": "https://github.com/shubham-agarwal-27/hooks-github-deploy-azure#readme",
   "dependencies": {
     "adal-node": "^0.2.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fs": "0.0.1-security",
     "keytar": "^6.0.1",
     "node-fetch": "^2.6.0",
